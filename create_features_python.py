@@ -2,6 +2,7 @@ import math
 import numpy as np
 from collections import Counter
 
+import pandas as pd
 import dask.dataframe as dd
 import dask.array as da
 
@@ -13,7 +14,7 @@ MOVING_WINDOW_SKIP_SIZE = 1
 
 
 def load_data():
-    return dd.read_csv(
+    return pd.read_csv(
         "./data/input.csv", encoding="utf-8", dtype=str, na_values="null"
     )
 
@@ -129,8 +130,8 @@ def encode_binary(sequences_vs_targets):
             del X_
             del y_
 
-        dataset_X = da.from_array(np.vstack(combined_X), chunks=-1)
-        dataset_y = da.from_array(np.vstack(combined_y), chunks=-1)
+        dataset_X = np.vstack(combined_X)
+        dataset_y = np.vstack(combined_y)
     return dataset_X, dataset_y
 
 
@@ -152,8 +153,14 @@ def main():
     sequences_vs_targets = extract_sequences_vs_targets(encoded_sessions)
 
     X, y = encode_binary(sequences_vs_targets)
+    # import pickle
+    # with open('data.pickle', 'wb') as f:
+    #     # Pickle the 'data' dictionary using the highest protocol available.
+    #     pickle.dump((X, y), f, pickle.HIGHEST_PROTOCOL)
+
     print(f"length of X and y: {len(X)}, {len(y)}")
     print("end")
+    return X, y
 
 if __name__ == "__main__":
     main()
