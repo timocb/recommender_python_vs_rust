@@ -153,10 +153,6 @@ def main():
     sequences_vs_targets = extract_sequences_vs_targets(encoded_sessions)
 
     X, y = encode_binary(sequences_vs_targets)
-    # import pickle
-    # with open('data.pickle', 'wb') as f:
-    #     # Pickle the 'data' dictionary using the highest protocol available.
-    #     pickle.dump((X, y), f, pickle.HIGHEST_PROTOCOL)
 
     print(f"length of X and y: {len(X)}, {len(y)}")
     print("end")

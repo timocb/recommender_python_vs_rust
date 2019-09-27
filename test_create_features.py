@@ -15,7 +15,7 @@ def mock_load_data():
 
 @mock.patch("create_features_python.load_data", mock_load_data)
 def test_main():
-    with open('data.pickle', 'rb') as f:
+    with open('./data/test_X_y.pickle', 'rb') as f:
         expected_X, expected_y = pickle.load(f)
 
     X, y = create_features_python.main()
