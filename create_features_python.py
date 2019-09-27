@@ -39,15 +39,11 @@ def get_popular_products(raw_sessions):
 
 
 def create_product_ids_masking(popular_products):
-    return {
-        product: index for index, product in enumerate(popular_products)
-    }
+    return {product: index for index, product in enumerate(popular_products)}
 
 
 def create_product_ids_masking_reversed(popular_products):
-    return {
-        index: product for index, product in enumerate(popular_products)
-    }
+    return {index: product for index, product in enumerate(popular_products)}
 
 
 def encode_sessions(product_ids_masking, raw_sessions):
@@ -73,7 +69,7 @@ def extract_sequences_vs_targets(encoded_sessions):
 
     # Only keep the x latest items that can fit in the REMEMBER_WINDOW_SIZE
     number_of_latest_items_to_fetch = MOVING_WINDOW_SIZE + (
-            (REMEMBER_WINDOW_SIZE - 1) * MOVING_WINDOW_SKIP_SIZE
+        (REMEMBER_WINDOW_SIZE - 1) * MOVING_WINDOW_SKIP_SIZE
     )
     for session in encoded_sessions:
         targets = session[1:]
@@ -82,12 +78,12 @@ def extract_sequences_vs_targets(encoded_sessions):
             base = session[: index + 1][-number_of_latest_items_to_fetch:]
             len_base_minus_window_size = len(base) - REMEMBER_WINDOW_SIZE
             number_of_active_remember_windows = (
-                    math.ceil(len_base_minus_window_size / MOVING_WINDOW_SKIP_SIZE) + 1
+                math.ceil(len_base_minus_window_size / MOVING_WINDOW_SKIP_SIZE) + 1
             )
             if number_of_active_remember_windows < 1:
                 number_of_active_remember_windows = 1
             sequences = [
-                base[i: i + MOVING_WINDOW_SIZE]
+                base[i : i + MOVING_WINDOW_SIZE]
                 for i in range(number_of_active_remember_windows)
             ]
             sequences = ([[]] * (REMEMBER_WINDOW_SIZE - len(sequences))) + sequences
@@ -103,7 +99,7 @@ def encode_binary(sequences_vs_targets):
     OUTPUT_PROCESSING_CHUNK_SIZE = 10000
     number_of_sequences = len(sequences_vs_targets)
     chunks = [
-        sequences_vs_targets[x: x + OUTPUT_PROCESSING_CHUNK_SIZE]
+        sequences_vs_targets[x : x + OUTPUT_PROCESSING_CHUNK_SIZE]
         for x in range(0, number_of_sequences, OUTPUT_PROCESSING_CHUNK_SIZE)
     ]
 
@@ -157,6 +153,7 @@ def main():
     print(f"length of X and y: {len(X)}, {len(y)}")
     print("end")
     return X, y
+
 
 if __name__ == "__main__":
     main()
