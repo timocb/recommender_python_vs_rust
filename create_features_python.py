@@ -6,21 +6,23 @@ import dask.dataframe as dd
 import dask.array as da
 
 
-# @profile
-def main():
-    # load data
-    raw_data = dd.read_csv(
+NUMBER_OF_TOP_POPULAR_PRODUCTS = 6000
+
+
+def load_data():
+    return dd.read_csv(
         "./data/input_small.csv", encoding="utf-8", dtype=str, na_values="null"
     )
-    print(raw_data.head(1))
 
-    # extract sessions
+
+def extract_raw_sessions(raw_data):
     raw_sessions = []
     for x in raw_data["product_sequence"].iteritems():
         raw_sessions.append(x[1].split(","))
+    return raw_sessions
 
-    # extract top n products from sessions
-    NUMBER_OF_TOP_POPULAR_PRODUCTS = 6000
+
+def get_popular_products(raw_sessions):
     products_all_occurrences = [x.strip() for y in raw_sessions for x in y if x.strip()]
     products_ordered_by_occurrences = sorted(
         Counter(products_all_occurrences).most_common(NUMBER_OF_TOP_POPULAR_PRODUCTS),
@@ -29,16 +31,22 @@ def main():
     )
 
     popular_products = [x[0] for x in products_ordered_by_occurrences]
-    popular_products_encoded = list(range(NUMBER_OF_TOP_POPULAR_PRODUCTS))
+    return popular_products
 
-    product_ids_masking = {
+
+def create_product_ids_masking(popular_products):
+    return {
         product: index for index, product in enumerate(popular_products)
     }
-    product_ids_masking_reversed = {
+
+
+def create_product_ids_masking_reversed(popular_products):
+    return {
         index: product for index, product in enumerate(popular_products)
     }
 
-    # encoding
+
+def encode_sessions(product_ids_masking, raw_sessions):
     encoded_sessions = [
         [
             product_ids_masking.get(x)
@@ -47,6 +55,22 @@ def main():
         ]
         for item in raw_sessions
     ]
+    return encoded_sessions
+
+
+def main():
+    raw_data = load_data()
+    print(raw_data.head())
+    raw_sessions = extract_raw_sessions(raw_data)
+
+    popular_products = get_popular_products(raw_sessions)
+    # popular_products_encoded = list(range(NUMBER_OF_TOP_POPULAR_PRODUCTS))
+
+    product_ids_masking = create_product_ids_masking(popular_products)
+    product_ids_masking_reversed = create_product_ids_masking_reversed(popular_products)
+
+    # encoding
+    encoded_sessions = encode_sessions(product_ids_masking, raw_sessions)
 
     # Valid sequences are those that at least have 2 products belonging to the top N
     # popular products
